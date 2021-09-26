@@ -27,8 +27,6 @@ namespace IdServer
                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
                .CreateLogger();
 
-            CreateHostBuilder(args).Build().Run();
-
             try
             {
                 var seed = args.Contains("/seed");
@@ -36,7 +34,7 @@ namespace IdServer
                 {
                     args = args.Except(new[] { "/seed" }).ToArray();
                 }
-
+                Log.Information("Building Host...");
                 var host = CreateHostBuilder(args).Build();
 
                 if (seed)

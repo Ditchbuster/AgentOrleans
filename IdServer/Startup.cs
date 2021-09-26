@@ -22,6 +22,8 @@ namespace IdServer
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
+
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
