@@ -135,6 +135,32 @@ namespace IdServer
                         ConfigContext.SaveChanges();
                     }
 
+                    if (!ConfigContext.IdentityResources.Any())
+                    {
+                        foreach (var resource in Resources.GetIdentityResources())
+                        {
+                            ConfigContext.IdentityResources.Add(resource.ToEntity());
+                        }
+                        ConfigContext.SaveChanges();
+                    }
+
+                    if (!ConfigContext.ApiScopes.Any())
+                    {
+                        foreach (var apiScope in Resources.GetApiScopes())
+                        {
+                            ConfigContext.ApiScopes.Add(apiScope.ToEntity());
+                        }
+                        ConfigContext.SaveChanges();
+                    }
+
+                    if (!ConfigContext.ApiResources.Any())
+                    {
+                        foreach (var resource in Resources.GetApiResources())
+                        {
+                            ConfigContext.ApiResources.Add(resource.ToEntity());
+                        }
+                        ConfigContext.SaveChanges();
+                    }
 
 
                 }
@@ -155,7 +181,7 @@ namespace IdServer
                     Description = "Example client application using client credentials",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
-                    AllowedScopes = new List<string> {"gameapi1.read, gameapi1.write"}
+                    AllowedScopes = new List<string> {"gameapi1.read", "gameapi1.write"}
                 }/*,
                 new Client
                 {
@@ -218,7 +244,7 @@ namespace IdServer
         {
             return new[]
             {
-                new ApiScope("gameapi1.read", "Read Access to GAME API V1"),
+                new ApiScope("gameapi1.read", "Read Access to GAME API V1"), //TODO: fix discription 
                 new ApiScope("gameapi1.write", "Write Access to GAME API V1")
             };
         }
