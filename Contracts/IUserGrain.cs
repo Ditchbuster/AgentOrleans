@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    public interface IUserGrain : IGrainWithIntegerKey
+    /// <summary>
+    /// The grain represents the user inside the silo, coordinates with clients outside the silo, receive and dispatch actions for the user
+    /// </summary>
+
+    public interface IUserGrain : IGrainWithGuidKey
     {
         Task<string> GetUserName();
-        //Task<string> GetUserID();
+        //public Guid GameUserId { get; set; }
         Task<string> GetUserState();
 
         //Task<string> AddUserCommand(string msg);

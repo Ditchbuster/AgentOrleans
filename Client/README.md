@@ -1,6 +1,6 @@
-API Client for Orleans
+# API Client for Orleans
 V0.0.1
-Users
+## Users
 /users ?
 	get
 	post
@@ -10,10 +10,12 @@ Users
 	delete
 
 subs: Agents,Missions
-Agents
+
+## Agents
 /agents
 /agents/{id}
-Missions - Task
+
+## Missions - Task
 /missions
 /missions/{id}
 

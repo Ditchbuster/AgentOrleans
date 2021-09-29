@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 using Orleans;
 using Contracts;
 
 namespace Client.Controllers
 {
     [ApiController]
-
     [Produces("application/json")]
     [Route("api/Games")]
     public class GamesController : Controller
@@ -84,6 +84,7 @@ namespace Client.Controllers
     }
 
     [Route("api/Users")]
+    [Authorize]
     public class UserController : Controller
     {
         private IClusterClient orleansClient;
@@ -94,10 +95,10 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public Task<string> Get(string agentId)
+        public Task<string> Get(string userId)
         {
-            var grain = this.orleansClient.GetGrain<IAgentGrain>(agentId);
-            return grain.GetAgentName();
+            var grain = this.orleansClient.GetGrain<IUserGrain>(Guid.Parse(userId));
+            return grain.GetUserName();
         }
         [HttpPost]
         public Task Post()
