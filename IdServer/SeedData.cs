@@ -182,27 +182,28 @@ namespace IdServer
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
                     AllowedScopes = new List<string> {"gameapi1.read", "gameapi1.write"}
-                }/*,
+                },
                 new Client
                 {
-                    ClientId = "oidcClient",
-                    ClientName = "Example Client Application",
+                    ClientId = "PostmanClient",
+                    ClientName = "Postman Testing",
                     ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
                     
                     AllowedGrantTypes = GrantTypes.Code,
-                    RedirectUris = new List<string> {"https://localhost:5002/signin-oidc"},
+                    AllowAccessTokensViaBrowser =true,
+                    RedirectUris = new List<string> {"https://localhost:5002/signin-oidc", "https://oauth.pstmn.io/v1/callback"},
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "role",
-                        "api1.read"
+                        "gameapi1.read"
                     },
 
                     RequirePkce = true,
                     AllowPlainTextPkce = false
-                } */
+                }
             };
         }
     }
