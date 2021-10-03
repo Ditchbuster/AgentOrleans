@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Orleans;
 using Contracts;
 
@@ -97,8 +98,14 @@ namespace Client.Controllers
         [HttpGet]
         public Task<string> Get(string userId)
         {
+
             var grain = this.orleansClient.GetGrain<IUserGrain>(Guid.Parse(userId));
-            return grain.GetUserName();
+            string claimString = "";
+            foreach (var c in User.Claims)
+            {
+                claimString += c.Type + ":" + c.Value + "\n";
+            }
+            return Task.FromResult<string>(claimString);
         }
         [HttpPost]
         public Task Post()
