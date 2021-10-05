@@ -63,6 +63,7 @@ namespace IdServer
                             UserName = "alice",
                             Email = "AliceSmith@email.com",
                             EmailConfirmed = true,
+                            GameUserId = Guid.NewGuid(),
                         };
                         var result = userMgr.CreateAsync(alice, "Pass123$").Result;
                         if (!result.Succeeded)
@@ -75,7 +76,8 @@ namespace IdServer
                             new Claim(JwtClaimTypes.GivenName, "Alice"),
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
                             new Claim(JwtClaimTypes.WebSite, "http://alice.com"),
-                        }).Result;
+                            new Claim("gameuserid",alice.GameUserId.ToString()),
+                    }).Result;
                         if (!result.Succeeded)
                         {
                             throw new Exception(result.Errors.First().Description);
@@ -94,7 +96,8 @@ namespace IdServer
                         {
                             UserName = "bob",
                             Email = "BobSmith@email.com",
-                            EmailConfirmed = true
+                            EmailConfirmed = true,
+                            GameUserId = Guid.NewGuid(),
                         };
                         var result = userMgr.CreateAsync(bob, "Pass123$").Result;
                         if (!result.Succeeded)
@@ -107,7 +110,8 @@ namespace IdServer
                             new Claim(JwtClaimTypes.GivenName, "Bob"),
                             new Claim(JwtClaimTypes.FamilyName, "Smith"),
                             new Claim(JwtClaimTypes.WebSite, "http://bob.com"),
-                            new Claim("location", "somewhere")
+                            new Claim("location", "somewhere"),
+                            new Claim("gameuserid",bob.GameUserId.ToString()),
                         }).Result;
                         if (!result.Succeeded)
                         {
@@ -182,27 +186,28 @@ namespace IdServer
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
                     AllowedScopes = new List<string> {"gameapi1.read", "gameapi1.write"}
-                }/*,
+                },
                 new Client
                 {
-                    ClientId = "oidcClient",
-                    ClientName = "Example Client Application",
+                    ClientId = "PostmanClient",
+                    ClientName = "Postman Testing",
                     ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
                     
                     AllowedGrantTypes = GrantTypes.Code,
-                    RedirectUris = new List<string> {"https://localhost:5002/signin-oidc"},
+                    AllowAccessTokensViaBrowser =true,
+                    RedirectUris = new List<string> {"https://localhost:5002/signin-oidc", "https://oauth.pstmn.io/v1/callback"},
                     AllowedScopes = new List<string>
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Email,
                         "role",
-                        "api1.read"
+                        "gameapi1.read"
                     },
 
                     RequirePkce = true,
                     AllowPlainTextPkce = false
-                } */
+                }
             };
         }
     }
@@ -235,7 +240,7 @@ namespace IdServer
                     Description = "Allow the application to access the GAME API V1 on your behalf",
                     Scopes = new List<string> {"gameapi1.read", "gameapi1.write"},
                     ApiSecrets = new List<Secret> {new Secret("ScopeSecret".Sha256())}, // TODO: change me - API secret!
-                    UserClaims = new List<string> {"role"}
+                    UserClaims = new List<string> {"role","gameuserid"}
                 }
             };
         }
