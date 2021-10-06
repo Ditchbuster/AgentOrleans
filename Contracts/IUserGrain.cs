@@ -15,8 +15,9 @@ namespace Contracts
         Task<string> GetUserName();
         //public Guid GameUserId { get; set; }
         Task<string> GetUserState();
-
+        Task QueueCommand(string msg);
         //Task<string> AddUserCommand(string msg);
         public Task StartMission(int taskId, string agentId); // dummy
+
     }
 }

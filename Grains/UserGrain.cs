@@ -13,12 +13,14 @@ namespace Grains
         private string name;
         private string state;
         private string agentId;
+        private List<string> userCommands;
 
         public UserGrain()
         {
             this.name = "test";
             this.state = "new";
             this.agentId = "a1";
+            this.userCommands = new List<string>();
         }
 
         public Task<string> GetUserName()
@@ -29,6 +31,13 @@ namespace Grains
         public Task<string> GetUserState()
         {
             return Task.FromResult(this.state);
+        }
+
+        public Task QueueCommand(string msg)
+        {
+            //TODO any logic to clean or reject the command.. 
+            userCommands.Append(msg);
+            return Task.CompletedTask;
         }
 
         public Task StartMission(int taskId, string agentId)
