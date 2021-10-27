@@ -11,15 +11,15 @@ namespace Grains
     public class UserGrain : Grain, IUserGrain
     {
         private string name;
-        private string state;
-        private string agentId;
+        private StateType state;
+        private Guid agentId;
         private List<string> userCommands;
 
         public UserGrain()
         {
             this.name = "test";
-            this.state = "new";
-            this.agentId = "a1";
+            this.state = StateType.NEW;
+            this.agentId = Guid.NewGuid();
             this.userCommands = new List<string>();
         }
 
@@ -30,14 +30,26 @@ namespace Grains
 
         public Task<string> GetUserState()
         {
-            return Task.FromResult(this.state);
+            return Task.FromResult(this.state.ToString());
         }
 
-        public Task QueueCommand(string msg)
+        public Task<string> GetInfo(string msg)
+        {
+            return Task.FromResult(msg);
+        }
+
+        public Task Action(string msg)
         {
             //TODO any logic to clean or reject the command.. 
-            userCommands.Append(msg);
+            //userCommands.Append(msg); log the message somewhere at somepoint...
+
             return Task.CompletedTask;
+        }
+
+        public Task<string> GetAgentInfo(string agentId = null)
+        {
+            string agentGuid = agentId is null ? this.agentId.ToString() : agentId;
+            return this.GrainFactory.GetGrain<AgentGrain>(agentGuid).GetAgentName();
         }
 
         public Task StartMission(int taskId, string agentId)
@@ -46,5 +58,23 @@ namespace Grains
             GrainFactory.GetGrain<ITaskGrain>(taskId).StartTask();
             return Task.CompletedTask;
         }
+
+        public enum StateType
+        {
+            NEW,
+            INITIALIZED
+        }
+        public enum ActionType
+        {
+
+        }
+        public enum InfoType
+        {
+            ALL,
+            AGENT,
+            STATE,
+            MAP,
+        }
+
     }
 }
