@@ -9,8 +9,8 @@ namespace Contracts
     public interface ILocationGrain : IGrainWithStringKey
     {
         Task<string> GetLocationName();
-        //Task<string> GetCordinate();
-        Task<string> GetTasks();
+        Task<int> GetCordinate();
+        Task<int> GetControlLevel();
         Task<string> ToggleActivity();
     }
 }

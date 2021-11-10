@@ -12,13 +12,13 @@ namespace Grains
     public class LocationGrain : Grain, ILocationGrain, IRemindable
     {
         private string name;
-        private int skill;
-
-
+        private int control; //TODO add multiuple factions, tracking each individually
+        private int coord; //TODO change to object representing location in game world
         public LocationGrain()
         {
             this.name = "test";
-            this.skill = 0;
+            this.control = 0;
+            this.coord = 0;
         }
 
         public Task<string> GetLocationName()
@@ -26,14 +26,14 @@ namespace Grains
             return Task.FromResult(this.name);
         }
 
-        public Task<string> GetTasks()
+        public Task<int> GetControlLevel()
         {
-            return Task.FromResult("Task List");
+            return Task.FromResult(this.control);
         }
 
-        public Task<int> GetAgentSkill()
+        public Task<int> GetCordinate()
         {
-            return Task.FromResult(this.skill);
+            return Task.FromResult(this.coord);
         }
 
         public Task<string> ToggleActivity()
@@ -46,12 +46,6 @@ namespace Grains
         {
             RegisterOrUpdateReminder("reminder2", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
             return Task.FromResult("test return of toggleactivity");
-        }
-
-        public Task ChangeSkill(int amount)
-        {
-            this.skill += amount;
-            return Task.CompletedTask;
         }
 
         Task IRemindable.ReceiveReminder(string reminderName, TickStatus status)

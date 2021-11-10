@@ -74,6 +74,7 @@ namespace Grains
             AGENT,
             STATE,
             MAP,
+            TASK,
         }
 
     }
