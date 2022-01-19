@@ -20,3 +20,9 @@ subs: Agents,Missions
 /missions/{id}
 
 subs: Agents
+
+## Locations
+/locations
+/locations/{id}
+
+subs:

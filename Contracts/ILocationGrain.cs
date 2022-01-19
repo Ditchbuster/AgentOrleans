@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    public interface ILocationGrain : IGrainWithStringKey
+    public interface ILocationGrain : IGrainWithGuidKey
     {
         Task<string> GetLocationName();
         Task<int> GetCordinate();

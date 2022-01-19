@@ -119,4 +119,40 @@ namespace Client.Controllers
             return Task.CompletedTask;
         }
     }
+
+    [Route("api/Locations")]
+    [Authorize]
+    public class LocationController : Controller
+    {
+        private IClusterClient orleansClient;
+
+        public LocationController(IClusterClient orleansClient)
+        {
+            this.orleansClient = orleansClient;
+        }
+
+        [HttpGet]
+        public Task<string> Get(string LocationId)
+        {
+
+            var grain = this.orleansClient.GetGrain<ILocationGrain>(Guid.Parse(LocationId));
+            string claimString = User.Identity.Name + "\n";
+            foreach (var c in User.Claims)
+            {
+                claimString += c.Type + ":" + c.Value + "\n";
+            }
+            return Task.FromResult<string>(claimString);
+        }
+        [HttpPost]
+        public Task Post()
+        {
+            //create new user
+            return Task.CompletedTask;
+        }
+        [HttpPut("{LocationId}")]
+        public Task Put(string LocationId)
+        {
+            return Task.CompletedTask;
+        }
+    }
 }
