@@ -13,11 +13,13 @@ namespace Grains
     {
         private string name;
         private int skill;
+        private Guid attachedTo; // for now a location, eventually a task or entity like port, ship or whatever, essentually currnet location
 
 
         public AgentGrain()
         {
             this.name = "test";
+            this.attachedTo = new Guid();
             this.skill = 0;
         }
 
@@ -34,12 +36,6 @@ namespace Grains
         public Task<string> ToggleActivity()
         {
             RegisterOrUpdateReminder("reminder", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
-            return Task.FromResult("test return of toggleactivity");
-        }
-
-        public Task<string> ToggleActivity2()
-        {
-            RegisterOrUpdateReminder("reminder2", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
             return Task.FromResult("test return of toggleactivity");
         }
 

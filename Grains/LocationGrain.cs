@@ -13,6 +13,7 @@ namespace Grains
     {
         private string name;
         private int control; //TODO add multiuple factions, tracking each individually
+        private int changeStats;
         private int coord; //TODO change to object representing location in game world
         public LocationGrain()
         {
@@ -36,15 +37,15 @@ namespace Grains
             return Task.FromResult(this.coord);
         }
 
+        public Task ChangeStats(int stats) // TODO stats eventually a list of stats that effect the location 
+        {
+            this.changeStats += stats;
+            return Task.CompletedTask;
+        }
+
         public Task<string> ToggleActivity()
         {
             RegisterOrUpdateReminder("reminder", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
-            return Task.FromResult("test return of toggleactivity");
-        }
-
-        public Task<string> ToggleActivity2()
-        {
-            RegisterOrUpdateReminder("reminder2", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
             return Task.FromResult("test return of toggleactivity");
         }
 

@@ -73,14 +73,7 @@ namespace Client.Controllers
         public async Task ToggleActivity(string agentId, int reminderId)
         {
             var grain = this.orleansClient.GetGrain<IAgentGrain>(agentId);
-            if (reminderId % 2 == 0)
-            {
-                await grain.ToggleActivity();
-            }
-            else
-            {
-                await grain.ToggleActivity2();
-            }
+            await grain.ToggleActivity();
         }
     }
 

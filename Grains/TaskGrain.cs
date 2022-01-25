@@ -16,6 +16,7 @@ namespace Grains
         private string status;
         private bool running;
         private int taskRemaining;
+        private List<Guid> taskLocations; // eventually a dict or object to hold more complex locations, task types, time lengths?
 
         public TaskGrain() => this.entities = new HashSet<string>();
 
@@ -29,10 +30,16 @@ namespace Grains
         }
         public Task StartTask()
         {
+            if (taskLocations == null)
+            { //just for testing create random location GUID
+                this.taskLocations = new List<Guid>(5);
+                this.taskLocations.Add(Guid.NewGuid());
+            }
             if (!running)
             {
                 this.running = true;
                 this.taskRemaining = 5;
+                this.GrainFactory.GetGrain<LocationGrain>(this.taskLocations[0]).ChangeStats(1);
                 RegisterOrUpdateReminder("reminder", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
                 return Task.CompletedTask;
             }
@@ -41,6 +48,7 @@ namespace Grains
         public Task FinishTask()
         {
             this.running = false;
+            this.GrainFactory.GetGrain<LocationGrain>(this.taskLocations[0]).ChangeStats(-1);
             this.UnregisterReminder(GetReminder("reminder").Result);
             return Task.CompletedTask;
         }

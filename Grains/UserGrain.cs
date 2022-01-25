@@ -42,7 +42,14 @@ namespace Grains
         {
             //TODO any logic to clean or reject the command.. 
             //userCommands.Append(msg); log the message somewhere at somepoint...
-
+            if (msg == "start")
+            {
+                //tell location ive started
+            }
+            else
+            {
+                //tell location ive stopped
+            }
             return Task.CompletedTask;
         }
 
