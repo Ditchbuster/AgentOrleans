@@ -11,6 +11,7 @@ namespace Contracts
         Task<string> GetLocationName();
         Task<int> GetCordinate();
         Task<int> GetControlLevel();
+        Task SetControlLevel(int lvl);
         Task<string> ToggleActivity();
     }
 }

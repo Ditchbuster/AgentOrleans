@@ -22,6 +22,24 @@ namespace Grains
             this.coord = 0;
         }
 
+        public override async Task OnActivateAsync()
+        {
+            this.GetPrimaryKey(out var stock);
+
+            RegisterTimer(Tick, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+
+            await base.OnActivateAsync();
+        }
+
+        private Task Tick(object stock)
+        {
+            if (control != 0)
+            {
+                control += control < 0 ? 1 : -1;
+            }
+            return Task.CompletedTask;
+        }
+
         public Task<string> GetLocationName()
         {
             return Task.FromResult(this.name);
@@ -30,6 +48,12 @@ namespace Grains
         public Task<int> GetControlLevel()
         {
             return Task.FromResult(this.control);
+        }
+
+        public Task SetControlLevel(int lvl)
+        {
+            this.control = lvl;
+            return Task.CompletedTask;
         }
 
         public Task<int> GetCordinate()

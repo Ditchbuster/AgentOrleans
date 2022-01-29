@@ -125,27 +125,23 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public Task<string> Get(string LocationId)
+        public Task<int> Get(string LocationId)
         {
 
             var grain = this.orleansClient.GetGrain<ILocationGrain>(Guid.Parse(LocationId));
-            string claimString = User.Identity.Name + "\n";
-            foreach (var c in User.Claims)
-            {
-                claimString += c.Type + ":" + c.Value + "\n";
-            }
-            return Task.FromResult<string>(claimString);
+            return grain.GetControlLevel();
         }
         [HttpPost]
-        public Task Post()
+        public Task Post(string LocationId)
         {
-            //create new user
-            return Task.CompletedTask;
+            var grain = this.orleansClient.GetGrain<ILocationGrain>(Guid.Parse(LocationId));
+            return grain.SetControlLevel(5);
         }
         [HttpPut("{LocationId}")]
         public Task Put(string LocationId)
         {
-            return Task.CompletedTask;
+            var grain = this.orleansClient.GetGrain<ILocationGrain>(Guid.Parse(LocationId));
+            return grain.SetControlLevel(5);
         }
     }
 }
