@@ -59,10 +59,10 @@ namespace Grains
             return this.GrainFactory.GetGrain<AgentGrain>(agentGuid).GetAgentName();
         }
 
-        public Task StartMission(int taskId, string agentId)
+        public Task StartMission(string taskId, string agentId)
         {
-            GrainFactory.GetGrain<ITaskGrain>(taskId).AddTaskEntity(agentId);
-            GrainFactory.GetGrain<ITaskGrain>(taskId).StartTask();
+            GrainFactory.GetGrain<ITaskGrain>(Guid.Parse(taskId)).AddTaskEntity(agentId);
+            GrainFactory.GetGrain<ITaskGrain>(Guid.Parse(taskId)).StartTask();
             return Task.CompletedTask;
         }
 

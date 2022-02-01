@@ -17,7 +17,7 @@ namespace Contracts
         Task<string> GetUserState();
         Task<string> GetInfo(string msg);
         Task Action(string msg);
-        Task StartMission(int taskId, string agentId); // dummy
+        Task StartMission(string taskId, string agentId); // dummy
 
     }
 }

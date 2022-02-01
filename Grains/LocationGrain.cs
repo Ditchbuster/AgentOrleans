@@ -19,6 +19,7 @@ namespace Grains
         {
             this.name = "test";
             this.control = 0;
+            this.changeStats = 0;
             this.coord = 0;
         }
 
@@ -33,10 +34,7 @@ namespace Grains
 
         private Task Tick(object stock)
         {
-            if (control != 0)
-            {
-                control += control < 0 ? 1 : -1;
-            }
+            control += changeStats;
             return Task.CompletedTask;
         }
 
@@ -56,6 +54,10 @@ namespace Grains
             return Task.CompletedTask;
         }
 
+        public Task<LocationData> GetData()
+        {
+            return Task.FromResult(new LocationData(this.GetPrimaryKey(), name, control, coord, System.DateTime.Now));
+        }
         public Task<int> GetCordinate()
         {
             return Task.FromResult(this.coord);

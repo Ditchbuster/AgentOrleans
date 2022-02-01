@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Contracts
 {
-    public interface ITaskGrain : IGrainWithIntegerKey
+    public interface ITaskGrain : IGrainWithGuidKey
     {
         Task<string> GetTaskName();
         Task<string> GetTaskStatus();

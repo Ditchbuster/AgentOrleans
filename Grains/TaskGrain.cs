@@ -6,11 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Grains
 {
+
     public class TaskGrain : Grain, ITaskGrain, IRemindable
     {
+        private readonly ILogger _logger;
+
         private HashSet<string> entities;
         private string name;
         private string status;
@@ -18,7 +22,12 @@ namespace Grains
         private int taskRemaining;
         private List<Guid> taskLocations; // eventually a dict or object to hold more complex locations, task types, time lengths?
 
-        public TaskGrain() => this.entities = new HashSet<string>();
+        public TaskGrain(ILogger<TaskGrain> logger)
+        {
+            _logger = logger;
+            this.entities = new HashSet<string>();
+            this.running = false;
+        }
 
         public Task<string> GetTaskName()
         {
@@ -26,7 +35,7 @@ namespace Grains
         }
         public Task<string> GetTaskStatus()
         {
-            return Task.FromResult<string>(this.name);
+            return Task.FromResult<string>(this.status);
         }
         public Task StartTask()
         {
@@ -37,9 +46,12 @@ namespace Grains
             }
             if (!running)
             {
+
                 this.running = true;
                 this.taskRemaining = 5;
-                this.GrainFactory.GetGrain<LocationGrain>(this.taskLocations[0]).ChangeStats(1);
+                var grain = this.GrainFactory.GetGrain<ILocationGrain>(this.taskLocations[0]);
+                grain.ChangeStats(1);
+                _logger.LogInformation("We made it here");
                 RegisterOrUpdateReminder("reminder", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
                 return Task.CompletedTask;
             }
@@ -48,7 +60,7 @@ namespace Grains
         public Task FinishTask()
         {
             this.running = false;
-            this.GrainFactory.GetGrain<LocationGrain>(this.taskLocations[0]).ChangeStats(-1);
+            this.GrainFactory.GetGrain<ILocationGrain>(this.taskLocations[0]).ChangeStats(-1);
             this.UnregisterReminder(GetReminder("reminder").Result);
             return Task.CompletedTask;
         }
@@ -60,7 +72,7 @@ namespace Grains
 
         Task IRemindable.ReceiveReminder(string reminderName, TickStatus status)
         {
-            Console.WriteLine("TaskGrain reminder: " + reminderName);
+            _logger.LogInformation("TaskGrain reminder: " + reminderName);
             taskRemaining += -1;
             if (taskRemaining >= 0)
             {
@@ -73,7 +85,7 @@ namespace Grains
             else
             {
                 FinishTask();
-                Console.WriteLine("Task completed");
+                _logger.LogInformation("Task completed");
             }
             return Task.CompletedTask;
         }

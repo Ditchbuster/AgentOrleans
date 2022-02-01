@@ -70,10 +70,11 @@ namespace Client.Controllers
             return Task.FromResult(grain.GetAgentName().Result + " " + grain.GetAgentSkill().Result.ToString());
         }
         [HttpGet("toggle")]
-        public async Task ToggleActivity(string agentId, int reminderId)
+        public Task ToggleActivity(string agentId)
         {
-            var grain = this.orleansClient.GetGrain<IAgentGrain>(agentId);
-            await grain.ToggleActivity();
+            var grain = this.orleansClient.GetGrain<ITaskGrain>(Guid.Parse(agentId));
+            grain.StartTask();
+            return Task.CompletedTask;
         }
     }
 
@@ -125,11 +126,11 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public Task<int> Get(string LocationId)
+        public Task<LocationData> Get(string LocationId)
         {
 
             var grain = this.orleansClient.GetGrain<ILocationGrain>(Guid.Parse(LocationId));
-            return grain.GetControlLevel();
+            return grain.GetData();
         }
         [HttpPost]
         public Task Post(string LocationId)
