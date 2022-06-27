@@ -23,6 +23,14 @@ namespace Grains
             this.userCommands = new List<string>();
         }
 
+        public UserGrain(string name, StateType state = StateType.NEW)
+        {
+            this.name = name;
+            this.state = state;
+            this.agentId = Guid.NewGuid();
+            this.userCommands = new List<string>();
+        }
+
         public Task<string> GetUserName()
         {
             return Task.FromResult(this.name);
