@@ -79,7 +79,7 @@ namespace Client.Controllers
     }
 
     [Route("api/Users")]
-    [Authorize]
+    //[Authorize]
     public class UserController : Controller
     {
         private IClusterClient orleansClient;
@@ -115,7 +115,7 @@ namespace Client.Controllers
     }
 
     [Route("api/Locations")]
-    [Authorize]
+    //[Authorize]
     public class LocationController : Controller
     {
         private IClusterClient orleansClient;
