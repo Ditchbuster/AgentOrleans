@@ -13,7 +13,7 @@ namespace Client.Controllers
 {
     [ApiController]
     [Produces("application/json")]
-    [Route("api/Games")]
+    /* [Route("api/Games")]
     public class GamesController : Controller
     {
         private IClusterClient orleansClient;
@@ -24,7 +24,7 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public Task<List<string>> Get(int gameId)
+        public async Task<List<string>> Get(int gameId)
         {
             var grain = this.orleansClient.GetGrain<IGameGrain>(gameId);
             return grain.ListPlayersAsync();
@@ -45,7 +45,7 @@ namespace Client.Controllers
         }
 
 
-    }
+    } */
 
     [Route("api/Agent")]
     public class AgentController : Controller
@@ -58,10 +58,15 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public Task<string> Get(string agentId)
+        public async Task<AgentData> Get(string agentId)
         {
             var grain = this.orleansClient.GetGrain<IAgentGrain>(agentId);
-            return grain.GetAgentName();
+            AgentData agent = new AgentData();
+            agent.agentId = Guid.Parse(grain.GetPrimaryKeyString());
+            agent.name = await grain.GetAgentName();
+            //return Task.FromResult(agent);
+            return agent;
+            
         }
         [HttpGet("{agentId}")]
         public Task<string> GetId(string agentId)
@@ -90,22 +95,25 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public Task<string> Get(string userId)
+        public Task<UserData> Get(string userId)
         {
 
             var grain = this.orleansClient.GetGrain<IUserGrain>(Guid.Parse(userId));
-            string claimString = "";
+            /* string claimString = "";
             foreach (var c in User.Claims)
             {
                 claimString += c.Type + ":" + c.Value + "\n";
-            }
-            return Task.FromResult<string>(claimString);
+            } */
+            UserData userData = new userData();
+            userData.userId = userId;
+            return Task.FromResult<UserData>(userData);
         }
         [HttpPost]
-        public Task Post()
+        public Task<Guid> Post()
         {
             //create new user
-            return Task.CompletedTask;
+            Guid newId = Guid.NewGuid();
+            return Task.FromResult(newId);
         }
         [HttpPut("{agentId}")]
         public Task Put(string agentId)

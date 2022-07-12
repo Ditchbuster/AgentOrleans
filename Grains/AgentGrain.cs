@@ -33,6 +33,7 @@ namespace Grains
             return Task.FromResult(this.skill);
         }
 
+
         public Task<string> ToggleActivity()
         {
             RegisterOrUpdateReminder("reminder", TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));

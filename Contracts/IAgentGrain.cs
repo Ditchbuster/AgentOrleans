@@ -12,5 +12,6 @@ namespace Contracts
         Task<int> GetAgentSkill();
         Task<string> ToggleActivity();
         Task ChangeSkill(int amount);
+        //Task<AgentData> GetAgentData();
     }
 }
