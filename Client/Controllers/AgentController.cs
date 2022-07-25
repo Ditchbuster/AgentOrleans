@@ -58,15 +58,27 @@ namespace Client.Controllers
         }
 
         [HttpGet]
-        public async Task<AgentData> Get(string agentId)
+        public async Task<AgentData> Get(string agentId, string userId)
         {
-            var grain = this.orleansClient.GetGrain<IAgentGrain>(agentId);
-            AgentData agent = new AgentData();
-            agent.agentId = Guid.Parse(grain.GetPrimaryKeyString());
-            agent.name = await grain.GetAgentName();
-            //return Task.FromResult(agent);
-            return agent;
-            
+            if (userId == null)
+            {
+                var grain = this.orleansClient.GetGrain<IAgentGrain>(agentId);
+                AgentData agent = new AgentData();
+                agent.agentId = Guid.Parse(grain.GetPrimaryKeyString());
+                agent.name = await grain.GetAgentName();
+                //return Task.FromResult(agent);
+                return agent;
+            }
+            else
+            {
+                if (agentId == null)
+                {
+                    var userGrain = this.orleansClient.GetGrain<IUserGrain>(Guid.Parse(userId));
+                    //TODO
+                    //var AgentGrain = this.orleansClient.GetGrain<IAgentGrain>(userGrain.)
+                }
+            }
+            return new AgentData();
         }
         [HttpGet("{agentId}")]
         public Task<string> GetId(string agentId)
@@ -104,16 +116,20 @@ namespace Client.Controllers
             {
                 claimString += c.Type + ":" + c.Value + "\n";
             } */
-            UserData userData = new userData();
-            userData.userId = userId;
+            UserData userData = new UserData();
+            userData.userId = Guid.Parse(userId);
             return Task.FromResult<UserData>(userData);
         }
         [HttpPost]
-        public Task<Guid> Post()
+        public Task<UserData> Post()
         {
             //create new user
-            Guid newId = Guid.NewGuid();
-            return Task.FromResult(newId);
+            //TODO check if user exists
+            UserData userData = new UserData();
+            userData.userId = Guid.NewGuid();
+            var grain = this.orleansClient.GetGrain<IUserGrain>(userData.userId);
+            //TODO instansiate the user
+            return Task.FromResult(userData);
         }
         [HttpPut("{agentId}")]
         public Task Put(string agentId)
