@@ -20,13 +20,12 @@ public class AgentUserController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-    public IEnumerable<UserData> GetUserData(string userId)
+    public UserData GetUserData(string userId)
     {
-        return Enumerable.Range(1, 5).Select(index => new UserData
+        return new UserData
         {
             UserId = Guid.NewGuid(),
             name = Summaries[Random.Shared.Next(Summaries.Length)],
-        })
-        .ToArray();
+        };
     }
 }
