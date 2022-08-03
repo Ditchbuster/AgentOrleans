@@ -12,6 +12,6 @@ namespace AgentContract
 
     public interface IAgentGrain : IGrainWithGuidKey
     {
-        Task<UserData> GetAgentData();
+        Task<AgentData> GetAgentData();
     }
 }
