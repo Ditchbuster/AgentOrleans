@@ -25,10 +25,21 @@ public class AgentAgentController : ControllerBase
     }
 
     [HttpGet("{agentId}")]
-    public Task<AgentData> GetAgentData(string agentStringId)
+    public Task<AgentData> GetAgentData(string agentStringId, string? userStringId)
     {
         Guid agentId = Guid.Parse(agentStringId); //TODO try block or other check on input
-        var grain = this.orleansClient.GetGrain<IAgentGrain>(agentId);
-        return grain.GetAgentData();
+        Task<AgentData> returnTask;
+        if (userStringId == null)
+        {
+            returnTask = this.orleansClient.GetGrain<IAgentGrain>(agentId).GetAgentData();
+        }
+        else
+        {
+            Guid userId = Guid.Parse(userStringId);
+            returnTask = this.orleansClient.GetGrain<IUserGrain>(userId).GetAgentData();
+        }
+
+
+        return returnTask;
     }
 }
