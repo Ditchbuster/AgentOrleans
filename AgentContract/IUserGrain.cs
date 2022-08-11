@@ -15,5 +15,6 @@ namespace AgentContract
         Task<UserData> GetUserData();
         Task<AgentData> GetAgentData();
         Task<List<AgentData>> GetAgentDataList();
+        Task<TaskData> GetTaskData();
     }
 }
