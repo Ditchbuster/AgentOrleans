@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AgentContract
 {
     /// <summary>
-    /// The grain represents the user inside the silo, coordinates with clients outside the silo, receive and dispatch actions for the user
+    /// The grain represents the agent inside the silo, ....
     /// </summary>
 
     public interface IAgentGrain : IGrainWithGuidKey
