@@ -1,6 +1,6 @@
 namespace AgentGrainInterfaces;
 
-public interface IUser : IGrainWithIntegerKey
+public interface IZone : IGrainWithStringKey
 {
     ValueTask<string> SayHello(string greeting);
 }

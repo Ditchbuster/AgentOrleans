@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orleans.Runtime;
+using AgentGrainInterfaces;
 
 // See https://aka.ms/new-console-template for more information
  AnsiConsole.Markup("[underline red]Hello[/] World!\n");
@@ -48,16 +49,42 @@ static async Task ProcessLoopAsync(ClientContext context)
     string? input = null;
     do
     {
-        input = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(input))
+        var fruit = AnsiConsole.Prompt(
+    new SelectionPrompt<string>()
+        .Title("What's your [green]favorite fruit[/]?")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Move up and down to reveal more fruits)[/]")
+        .AddChoices(new[] {
+            "Exit","Test",
+        }));
+        //input = Console.ReadLine();
+        /* if (string.IsNullOrWhiteSpace(input) && AnsiConsole.Confirm("Do you really want to exit?"))
         {
+            break;
+        } */
+        if (fruit switch
+        {
+            "Test" => SayHello(context),
+            //"/l" => LeaveChannel(context),
+            _ => null
+        } is Task<ClientContext> cxtTask)
+        {
+            context = await cxtTask;
             continue;
         }
-        else if (AnsiConsole.Confirm("Do you really want to exit?"))
-        {
+        
+        if (fruit == "Exit"&& AnsiConsole.Confirm("Do you really want to exit?")){
             break;
         }
 
-
     } while (input is not "/exit");
+}
+
+static async Task<ClientContext> SayHello(ClientContext context)
+{
+    var zone = context.Client.GetGrain<IZone>("0");
+    string msg = await zone.SayHello(context.UserName);
+    AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
+    return context;
+
 }
