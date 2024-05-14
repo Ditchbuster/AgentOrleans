@@ -11,5 +11,5 @@ tasks:
     command: dotnet run
 
 vscode:
-  extensions:
-    - muhammad-sammy.csharp
+    extensions:
+        - muhammad-sammy.csharp
