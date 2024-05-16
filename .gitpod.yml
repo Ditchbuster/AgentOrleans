@@ -13,3 +13,4 @@ tasks:
 vscode:
     extensions:
         - muhammad-sammy.free-csharp-vscode
+        - ms-dotnettools.csdevkit
