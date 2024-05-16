@@ -55,7 +55,7 @@ static async Task ProcessLoopAsync(ClientContext context)
         .PageSize(10)
         .MoreChoicesText("[grey](Move up and down to reveal more fruits)[/]")
         .AddChoices(new[] {
-            "Exit","Test",
+            "Exit","Hello","Reminder",
         }));
         //input = Console.ReadLine();
         /* if (string.IsNullOrWhiteSpace(input) && AnsiConsole.Confirm("Do you really want to exit?"))
@@ -64,8 +64,9 @@ static async Task ProcessLoopAsync(ClientContext context)
         } */
         if (fruit switch
         {
-            "Test" => SayHello(context),
+            "Hello" => SayHello(context),
             //"/l" => LeaveChannel(context),
+            "Reminder" => TestReminder(context),
             _ => null
         } is Task<ClientContext> cxtTask)
         {
@@ -85,6 +86,16 @@ static async Task<ClientContext> SayHello(ClientContext context)
     var zone = context.Client.GetGrain<IZone>("0");
     string msg = await zone.SayHello(context.UserName);
     AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
+    return context;
+
+}
+
+static async Task<ClientContext> TestReminder(ClientContext context)
+{
+    var zone = context.Client.GetGrain<ITask>(Guid.NewGuid());
+    string msg = await zone.SayHello(context.UserName);
+    AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
+    await zone.StartTask("0");
     return context;
 
 }
