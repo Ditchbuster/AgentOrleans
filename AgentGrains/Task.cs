@@ -7,6 +7,9 @@ namespace AgentGrains;
 public class AgentTask : Grain, ITask, IRemindable
 {
     private readonly ILogger _logger;
+private int _length;
+private Guid _agentId;
+
     private IGrainReminder? _reminder;
     public AgentTask(ILogger<AgentTask> logger) => _logger = logger;
 
@@ -34,14 +37,24 @@ public class AgentTask : Grain, ITask, IRemindable
         _reminder = await this.RegisterOrUpdateReminder(
             reminderName: this.GetPrimaryKeyString(),
             dueTime: TimeSpan.Zero,
-            period: TimeSpan.FromMinutes(2));
+            period: TimeSpan.FromMinutes(_length));
         return true;
     }
 
-    public Task ReceiveReminder(string reminderName, TickStatus status)
+    public async Task ReceiveReminder(string reminderName, TickStatus status)
     {
-        Console.WriteLine("Thanks for reminding me-- I almost forgot!");
-    return Task.CompletedTask;
+        IAgent agent = GrainFactory.GetGrain<IAgent>(_agentId);
+        agent.AddExperence(10);
+        Console.WriteLine("Task finished {0}",_agentId);
+        agent.SayHello("");
+        await this.UnregisterReminder(await this.GetReminder(reminderName)); //todo catch null?
+        return;
         //throw new NotImplementedException();
+    }
+    public Task SetTaskInfo(string agentId, int minutes){
+        //todo check if task is running first
+        _agentId = new Guid(agentId);
+        _length = minutes;
+        return Task.CompletedTask;
     }
 }

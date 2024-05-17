@@ -18,15 +18,15 @@ public class Agent : Grain, IAgent
     }
     ValueTask<string> IAgent.SayHello(string greeting)
     {
-        _logger.LogInformation("""
-            SayHello message received: greeting = "{Greeting}"
-            """,
-            greeting);
-        
-        return ValueTask.FromResult($"""
-
+        string msg = string.Format($"""
             Client said: "{greeting}", so Agent({this.GetPrimaryKeyString()}) says: Hello! XP:{this._xp}
             """);
+        _logger.LogInformation("""
+            {0}.SayHello: greeting="{Greeting}", xp={_xp}
+            """,
+            this.GetPrimaryKeyString(),greeting,_xp);
+        
+        return ValueTask.FromResult(msg);
     }
     
     Task IAgent.AddExperence(int xpAmount){

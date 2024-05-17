@@ -93,6 +93,7 @@ static async Task<ClientContext> SayHello(ClientContext context)
 static async Task<ClientContext> TestReminder(ClientContext context)
 {
     var zone = context.Client.GetGrain<ITask>(Guid.NewGuid());
+    await zone.SetTaskInfo(new Guid().ToString(),2);
     string msg = await zone.SayHello(context.UserName);
     AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
     await zone.StartTask("0");
