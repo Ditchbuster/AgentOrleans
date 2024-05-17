@@ -8,7 +8,8 @@ await Host.CreateDefaultBuilder(args)
         siloBuilder
             .UseLocalhostClustering()
             .AddMemoryGrainStorage("PubSubStore")
-            .UseInMemoryReminderService();
+            .UseInMemoryReminderService()
+            .UseDashboard();
             //.AddMemoryStreams("chat");
     })
     .RunConsoleAsync();
