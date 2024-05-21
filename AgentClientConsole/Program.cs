@@ -5,16 +5,16 @@ using Orleans.Runtime;
 using AgentGrainInterfaces;
 
 // See https://aka.ms/new-console-template for more information
- AnsiConsole.Markup("[underline red]Hello[/] World!\n");
+AnsiConsole.Markup("[underline red]Hello[/] World!\n");
 
- using var host = new HostBuilder()
+using var host = new HostBuilder()
     .UseOrleansClient(clientBuilder =>
     {
         clientBuilder.UseLocalhostClustering();
             //.AddMemoryStreams("chat");
     })
     .Build();
-
+Guid agentId = Guid.NewGuid();
 var client = host.Services.GetRequiredService<IClusterClient>();
 
 ClientContext context = new(client);
@@ -26,7 +26,7 @@ context = context with
 await ProcessLoopAsync(context);
 await StopAsync(host);
 
-
+//*******END************
 static Task StartAsync(IHost host) =>
     AnsiConsole.Status().StartAsync("Connecting to server", async ctx =>
     {
@@ -44,7 +44,7 @@ static Task StopAsync(IHost host) =>
         await host.StopAsync();
     });
 
-static async Task ProcessLoopAsync(ClientContext context)
+async Task ProcessLoopAsync(ClientContext context)
 {
     string? input = null;
     do
@@ -81,19 +81,19 @@ static async Task ProcessLoopAsync(ClientContext context)
     } while (input is not "/exit");
 }
 
-static async Task<ClientContext> SayHello(ClientContext context)
+async Task<ClientContext> SayHello(ClientContext context)
 {
-    var zone = context.Client.GetGrain<IZone>("0");
+    var zone = context.Client.GetGrain<IAgent>(agentId);
     string msg = await zone.SayHello(context.UserName);
     AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
     return context;
 
 }
 
-static async Task<ClientContext> TestReminder(ClientContext context)
+async Task<ClientContext> TestReminder(ClientContext context)
 {
     var zone = context.Client.GetGrain<ITask>(Guid.NewGuid());
-    await zone.SetTaskInfo(new Guid().ToString(),2);
+    await zone.SetTaskInfo(agentId.ToString(),2);
     string msg = await zone.SayHello(context.UserName);
     AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
     await zone.StartTask("0");

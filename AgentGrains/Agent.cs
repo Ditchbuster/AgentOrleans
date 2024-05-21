@@ -1,14 +1,18 @@
 using AgentGrainInterfaces;
 using Microsoft.Extensions.Logging;
+using Orleans.Runtime;
 
 namespace AgentGrains;
 
 public class Agent : Grain, IAgent
 {
     private readonly ILogger _logger;
-    private int _xp; //TODO move to state, update for different types of xp
-    public Agent(ILogger<Agent> logger) => _logger = logger;
-
+    private readonly IPersistentState<AgentState> _state;
+    public Agent(ILogger<Agent> logger,[PersistentState("agent", "Store")]
+        IPersistentState<AgentState> state){ 
+        _logger = logger;
+        _state = state;
+    }
     private readonly int _location;
 
      public override Task OnActivateAsync(CancellationToken cancellationToken)
@@ -19,19 +23,19 @@ public class Agent : Grain, IAgent
     ValueTask<string> IAgent.SayHello(string greeting)
     {
         string msg = string.Format($"""
-            Client said: "{greeting}", so Agent({this.GetPrimaryKeyString()}) says: Hello! XP:{this._xp}
+            Client said: "{greeting}", so Agent({this.GetPrimaryKeyString()}) says: Hello! XP:{this._state.State.xp}
             """);
         _logger.LogInformation("""
-            {0}.SayHello: greeting="{Greeting}", xp={_xp}
+            {0}.SayHello: greeting="{Greeting}", xp={xp}
             """,
-            this.GetPrimaryKeyString(),greeting,_xp);
+            this.GetPrimaryKeyString(),greeting,_state.State.xp);
         
         return ValueTask.FromResult(msg);
     }
     
-    Task IAgent.AddExperence(int xpAmount){
-        _xp = _xp+xpAmount;
-        return Task.CompletedTask;
+    async Task IAgent.AddExperence(int xpAmount){
+        _state.State.xp = _state.State.xp+xpAmount;
+        await _state.WriteStateAsync();
     }
 
 }
