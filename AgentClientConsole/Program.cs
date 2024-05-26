@@ -14,15 +14,15 @@ using var host = new HostBuilder()
             //.AddMemoryStreams("chat");
     })
     .Build();
-Guid agentId = Guid.NewGuid();
+//Guid agentId = Guid.NewGuid();
 var client = host.Services.GetRequiredService<IClusterClient>();
-
 ClientContext context = new(client);
 await StartAsync(host);
 context = context with
 {
     UserName = AnsiConsole.Ask<string>("What is your [aqua]name[/]?")
 };
+Guid agentId = context.Client.GetGrain<IUser>(context.UserName).GetInfo().Result.primaryAgentId;
 await ProcessLoopAsync(context);
 await StopAsync(host);
 

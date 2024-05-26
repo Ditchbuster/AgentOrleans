@@ -1,7 +1,7 @@
 [Serializable]
 public class AgentState
 {
-    public required string Name { get; set; }
+    public required string name { get; set; }
 
     public int xp = 0;
 }
