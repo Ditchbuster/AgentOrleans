@@ -23,6 +23,7 @@ context = context with
     UserName = AnsiConsole.Ask<string>("What is your [aqua]name[/]?")
 };
 Guid agentId = context.Client.GetGrain<IUser>(context.UserName).GetInfo().Result.primaryAgentId;
+AnsiConsole.MarkupLine("{0}",agentId);
 await ProcessLoopAsync(context);
 await StopAsync(host);
 
@@ -51,11 +52,11 @@ async Task ProcessLoopAsync(ClientContext context)
     {
         var fruit = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
-        .Title("What's your [green]favorite fruit[/]?")
+        .Title("[green]Main Menu[/]?")
         .PageSize(10)
-        .MoreChoicesText("[grey](Move up and down to reveal more fruits)[/]")
+        .MoreChoicesText("[grey](Move up and down to reveal more options)[/]")
         .AddChoices(new[] {
-            "Exit","Hello","Reminder",
+            "Hello Agent","Hello User","Reminder","Exit",
         }));
         //input = Console.ReadLine();
         /* if (string.IsNullOrWhiteSpace(input) && AnsiConsole.Confirm("Do you really want to exit?"))
@@ -64,7 +65,8 @@ async Task ProcessLoopAsync(ClientContext context)
         } */
         if (fruit switch
         {
-            "Hello" => SayHello(context),
+            "Hello Agent" => SayHelloAgent(context),
+            "Hello User" => SayHelloUser(context),
             //"/l" => LeaveChannel(context),
             "Reminder" => TestReminder(context),
             _ => null
@@ -81,11 +83,20 @@ async Task ProcessLoopAsync(ClientContext context)
     } while (input is not "/exit");
 }
 
-async Task<ClientContext> SayHello(ClientContext context)
+async Task<ClientContext> SayHelloAgent(ClientContext context)
 {
     var zone = context.Client.GetGrain<IAgent>(agentId);
     string msg = await zone.SayHello(context.UserName);
     AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
+    return context;
+
+}
+async Task<ClientContext> SayHelloUser(ClientContext context)
+{
+    var zone = context.Client.GetGrain<IUser>(context.UserName);
+    UserData userData = await zone.GetInfo();
+
+    AnsiConsole.MarkupLine("[bold aqua]{0}[/]",userData.primaryAgentId);
     return context;
 
 }

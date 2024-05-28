@@ -15,9 +15,13 @@ public class User : Grain, IUser
     }
     private readonly int _location;
 
-     public override Task OnActivateAsync(CancellationToken cancellationToken)
+    public override Task OnActivateAsync(CancellationToken cancellationToken)
     {
-        this._state.State.name = this.GetPrimaryKeyString();  
+        this._state.State.name = this.GetPrimaryKeyString();
+        if (this._state.State.primaryAgentId == Guid.Empty){
+            this._state.State.primaryAgentId = Guid.NewGuid(); //TODO if there is no Agent, what process should initilze? options to create custom?
+            this._state.WriteStateAsync();
+        }
         return base.OnActivateAsync(cancellationToken);
     }
     ValueTask<string> IUser.SayHello(string greeting)
