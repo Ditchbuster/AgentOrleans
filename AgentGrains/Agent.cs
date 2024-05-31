@@ -37,5 +37,8 @@ public class Agent : Grain, IAgent
         _state.State.xp = _state.State.xp+xpAmount;
         await _state.WriteStateAsync();
     }
-
+    public Task<AgentData> GetInfo()
+    {
+        return Task.FromResult(new AgentData(this._state.State.name, this._state.State.xp));
+    }
 }

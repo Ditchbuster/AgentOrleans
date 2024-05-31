@@ -56,7 +56,7 @@ async Task ProcessLoopAsync(ClientContext context)
         .PageSize(10)
         .MoreChoicesText("[grey](Move up and down to reveal more options)[/]")
         .AddChoices(new[] {
-            "Hello Agent","Hello User","Reminder","Exit",
+            "Hello Agent","Hello User","Agent Info","Reminder","Exit",
         }));
         //input = Console.ReadLine();
         /* if (string.IsNullOrWhiteSpace(input) && AnsiConsole.Confirm("Do you really want to exit?"))
@@ -67,6 +67,7 @@ async Task ProcessLoopAsync(ClientContext context)
         {
             "Hello Agent" => SayHelloAgent(context),
             "Hello User" => SayHelloUser(context),
+            "Agent Info" => DisplayAgentInfo(context),
             //"/l" => LeaveChannel(context),
             "Reminder" => TestReminder(context),
             _ => null
@@ -110,4 +111,11 @@ async Task<ClientContext> TestReminder(ClientContext context)
     await zone.StartTask("0");
     return context;
 
+}
+
+async Task<ClientContext> DisplayAgentInfo(ClientContext context)
+{
+    AgentData agentData = await context.Client.GetGrain<IAgent>(agentId).GetInfo();
+    AnsiConsole.MarkupLine("[bold aqua]{0}:[/] [green]{1}[/]",agentData.name,agentData.xp);
+    return context;
 }
