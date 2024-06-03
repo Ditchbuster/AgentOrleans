@@ -56,7 +56,7 @@ async Task ProcessLoopAsync(ClientContext context)
         .PageSize(10)
         .MoreChoicesText("[grey](Move up and down to reveal more options)[/]")
         .AddChoices(new[] {
-            "Hello Agent","Hello User","Agent Info","Reminder","Exit",
+            "Hello Agent","Hello User","Agent Info","Task","Reminder","Exit",
         }));
         //input = Console.ReadLine();
         /* if (string.IsNullOrWhiteSpace(input) && AnsiConsole.Confirm("Do you really want to exit?"))
@@ -68,6 +68,7 @@ async Task ProcessLoopAsync(ClientContext context)
             "Hello Agent" => SayHelloAgent(context),
             "Hello User" => SayHelloUser(context),
             "Agent Info" => DisplayAgentInfo(context),
+            "Task" => DisplayTaskInfo(context),
             //"/l" => LeaveChannel(context),
             "Reminder" => TestReminder(context),
             _ => null
@@ -117,5 +118,29 @@ async Task<ClientContext> DisplayAgentInfo(ClientContext context)
 {
     AgentData agentData = await context.Client.GetGrain<IAgent>(agentId).GetInfo();
     AnsiConsole.MarkupLine("[bold aqua]{0}:[/] [green]{1}[/]",agentData.name,agentData.xp);
+    return context;
+}
+async Task<ClientContext> DisplayTaskInfo(ClientContext context)
+{
+    IZone zone = context.Client.GetGrain<IZone>("0.0.0"); //TODO use zone located in
+    var taskIds = zone.GetTasks().Result.Select(g => g.ToString());
+    var taskSelect = AnsiConsole.Prompt(
+    new SelectionPrompt<string>()
+        .Title("[green]Which task to start?[/]?")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Move up and down to reveal more options)[/]")
+        .AddChoices(taskIds));
+    ITask task = context.Client.GetGrain<ITask>(Guid.Parse(taskSelect));
+    var agent = AnsiConsole.Prompt(
+    new SelectionPrompt<string>()
+        .Title("[green]Which agent to send?[/]?")
+        .PageSize(10)
+        .MoreChoicesText("[grey](Move up and down to reveal more options)[/]")
+        .AddChoices(new[] {agentId.ToString()
+        }));
+    await task.SetTaskInfo(agent,2);
+    await task.StartTask(); //NEXT update start task
+    AnsiConsole.MarkupLine("[bold aqua]{0}:[/] [green]{1}[/]",taskSelect,agent);
+    
     return context;
 }

@@ -28,4 +28,9 @@ public class Zone : Grain, IZone
             Client said: "{greeting}", so HelloGrain ({_location})says: Hello!
             """);
     }
+
+    public Task<Guid[]> GetTasks() //TODO eventually return tasks(task data objects) availible here, accept filtering params
+    {
+        return Task.FromResult(new[]{Guid.NewGuid()});
+    }
 }
