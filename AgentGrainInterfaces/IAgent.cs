@@ -6,4 +6,5 @@ public interface IAgent : IGrainWithGuidKey
     Task AddExperence(int xpAmount);
     
     Task<AgentData> GetInfo();
+    Task<bool> SetBusy(bool busy, Guid taskId);
 }

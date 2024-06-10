@@ -109,7 +109,7 @@ async Task<ClientContext> TestReminder(ClientContext context)
     await zone.SetTaskInfo(agentId.ToString(),2);
     string msg = await zone.SayHello(context.UserName);
     AnsiConsole.MarkupLine("[bold aqua]{0}[/]",msg);
-    await zone.StartTask("0");
+    await zone.StartTask();
     return context;
 
 }
@@ -139,7 +139,7 @@ async Task<ClientContext> DisplayTaskInfo(ClientContext context)
         .AddChoices(new[] {agentId.ToString()
         }));
     await task.SetTaskInfo(agent,2);
-    await task.StartTask(); //NEXT update start task
+    await task.StartTask();
     AnsiConsole.MarkupLine("[bold aqua]{0}:[/] [green]{1}[/]",taskSelect,agent);
     
     return context;

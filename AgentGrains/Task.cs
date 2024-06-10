@@ -33,11 +33,13 @@ private Guid _agentId;
             """);
     }
 
-    public async Task<bool> StartTask(string agentId){
+    public async Task<bool> StartTask(){
         _reminder = await this.RegisterOrUpdateReminder(
             reminderName: this.GetPrimaryKeyString(),
             dueTime: TimeSpan.Zero,
             period: TimeSpan.FromMinutes(_length));
+        IAgent agent = GrainFactory.GetGrain<IAgent>(_agentId);
+        await agent.SetBusy(true,this.GetPrimaryKey());
         return true;
     }
 
@@ -47,6 +49,7 @@ private Guid _agentId;
         agent.AddExperence(10);
         Console.WriteLine("Task finished {0}",_agentId);
         agent.SayHello("");
+        await agent.SetBusy(false,this.GetPrimaryKey());
         await this.UnregisterReminder(await this.GetReminder(reminderName)); //todo catch null?
         return;
         //throw new NotImplementedException();

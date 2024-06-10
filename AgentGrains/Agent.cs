@@ -41,4 +41,23 @@ public class Agent : Grain, IAgent
     {
         return Task.FromResult(new AgentData(this._state.State.name, this._state.State.xp));
     }
+
+    public async Task<bool> SetBusy(bool busy, Guid taskId)
+    {
+        if (busy == true){
+        if (this._state.State.taskId == Guid.Empty){
+            this._state.State.taskId = taskId;
+            await this._state.WriteStateAsync();
+            return true;
+        }else{
+            _logger.LogError("Agent:{0} is already busy with {1}",
+            this.GetPrimaryKeyString(),this._state.State.taskId);
+            return false; //TODO proper error handling?
+        }}else
+        {
+            this._state.State.taskId = Guid.Empty;
+            await this._state.WriteStateAsync();
+            return true;   
+        }
+    }
 }
